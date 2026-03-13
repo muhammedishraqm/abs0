@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import { BookCallModal } from "@/components/ui/book-call-modal";
 
 const pricingTiers = [
   {
@@ -112,15 +113,17 @@ export function Pricing() {
                 </ul>
               </CardContent>
               <CardFooter className="pt-8">
-                <Button
-                  className={`w-full h-12 text-sm font-semibold transition-all ${
-                    tier.highlight
-                      ? "bg-white text-zinc-950 hover:bg-zinc-200"
-                      : "bg-zinc-800 text-white hover:bg-zinc-700"
-                  }`}
-                >
-                  {tier.buttonText}
-                </Button>
+                <BookCallModal selectedPackage={tier.name}>
+                  <Button
+                    className={`w-full h-12 text-sm font-semibold transition-all ${
+                      tier.highlight
+                        ? "bg-white text-zinc-950 hover:bg-zinc-200"
+                        : "bg-zinc-800 text-white hover:bg-zinc-700"
+                    }`}
+                  >
+                    {tier.buttonText}
+                  </Button>
+                </BookCallModal>
               </CardFooter>
             </Card>
           ))}

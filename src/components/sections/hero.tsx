@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { BookCallModal } from "@/components/ui/book-call-modal";
 
 export function Hero() {
   return (
@@ -32,13 +33,15 @@ export function Hero() {
         </div>
 
         <div className="flex flex-col items-center justify-center gap-4 pt-6 sm:flex-row">
-          <Button 
-            size="lg" 
-            className="h-14 bg-white px-10 text-base font-semibold text-zinc-950 transition-all hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Book a Strategy Call
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          <BookCallModal>
+            <Button 
+              size="lg" 
+              className="h-14 bg-white px-10 text-base font-semibold text-zinc-950 transition-all hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Book a Strategy Call
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </BookCallModal>
           <Button 
             variant="outline" 
             size="lg" 

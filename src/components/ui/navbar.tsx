@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { BookCallModal } from "@/components/ui/book-call-modal";
 
 export function Navbar() {
   return (
@@ -38,9 +39,11 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Button size="sm" className="bg-white text-black hover:bg-zinc-200">
-            Book Call
-          </Button>
+          <BookCallModal>
+            <Button size="sm" className="bg-white text-black hover:bg-zinc-200">
+              Book Call
+            </Button>
+          </BookCallModal>
         </div>
       </div>
     </nav>
