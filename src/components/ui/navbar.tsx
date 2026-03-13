@@ -1,29 +1,38 @@
-"use client";
-
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-black/50 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 w-full border-b border-zinc-800 bg-black/90 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center">
-          <Link href="/" className="text-xl font-bold tracking-tighter text-white">
-            AI AGENCY
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="relative h-9 w-9 overflow-hidden rounded-md bg-white p-1">
+              <Image 
+                src="/logo-new.jpg" 
+                alt="ABSTRACT Logo" 
+                fill 
+                className="object-contain"
+              />
+            </div>
+            <span className="text-xl font-bold tracking-tighter text-white">
+              ABSTRACT
+            </span>
           </Link>
         </div>
         
         <div className="hidden md:flex md:items-center md:space-x-8">
-          <Link href="/" className="text-sm font-medium text-zinc-400 transition-colors hover:text-white">
+          <Link href="/" className="text-sm font-medium text-white transition-colors hover:text-zinc-400 px-3 py-1 rounded-md hover:bg-zinc-900">
             Home
           </Link>
-          <Link href="#services" className="text-sm font-medium text-zinc-400 transition-colors hover:text-white">
+          <Link href="#services" className="text-sm font-medium text-white transition-colors hover:text-zinc-400 px-3 py-1 rounded-md hover:bg-zinc-900">
             Services
           </Link>
-          <Link href="#pricing" className="text-sm font-medium text-zinc-400 transition-colors hover:text-white">
+          <Link href="#pricing" className="text-sm font-medium text-white transition-colors hover:text-zinc-400 px-3 py-1 rounded-md hover:bg-zinc-900">
             Pricing
           </Link>
-          <Link href="#contact" className="text-sm font-medium text-zinc-400 transition-colors hover:text-white">
+          <Link href="#contact" className="text-sm font-medium text-white transition-colors hover:text-zinc-400 px-3 py-1 rounded-md hover:bg-zinc-900">
             Contact
           </Link>
         </div>

@@ -54,7 +54,7 @@ export function Contact() {
             <Input
               id="email"
               type="email"
-              placeholder="mohammed@enterprise.ae"
+              placeholder="abcd@gamil.com"
               className="h-12 border-zinc-800 bg-zinc-950/50 text-white placeholder:text-zinc-600 focus-visible:ring-zinc-700"
             />
           </div>

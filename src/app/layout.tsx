@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Automation Agency | Sovereign Enterprise Solutions",
+  title: "ABSTRACT | AI Automation Agency",
   description: "Bespoke AI ecosystems for elite UAE enterprises. Automate operations and scale without overhead.",
 };
 

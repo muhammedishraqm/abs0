@@ -8,7 +8,7 @@ export function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           <div className="text-zinc-500 text-sm">
-            &copy; {currentYear} AI AGENCY. All rights reserved.
+            &copy; {currentYear} ABSTRACT. All rights reserved.
           </div>
           
           <div className="flex items-center space-x-6 text-sm text-zinc-400">
