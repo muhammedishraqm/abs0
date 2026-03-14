@@ -1,4 +1,21 @@
 import { NextResponse } from "next/server";
+import * as admin from "firebase-admin";
+
+// Initialize Firebase Admin securely
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        // Handle newline characters in the private key from .env
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      }),
+    });
+  } catch (error) {
+    console.error("Firebase Admin Initialization Error:", error);
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -11,11 +28,32 @@ export async function POST(req: Request) {
       );
     }
 
-    // Simulate AI Generation Delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Connect to Firestore
+    const db = admin.firestore();
+    const userRef = db.collection("users").doc(userId);
+    const userDoc = await userRef.get();
 
-    // For now, return a placeholder response since there are no actual LLM keys provided
-    const generatedText = `Here is your high-converting copy based on your prompt:\n\n🚀 Introducing the ultimate solution for you!\n\nAre you tired of the same old problems? Look no further. Our innovative approach will revolutionize your experience.\n\n✨ Why choose us?\n- Unmatched quality and performance.\n- Eco-friendly and sustainable.\n- Built for the modern professional.\n\nDon't wait! Click the link below to transform your life today. 👇\n[Link]\n\n#Innovation #Future #Success`;
+    // Check Authorization
+    if (!userDoc.exists) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 403 }
+      );
+    }
+
+    const userData = userDoc.data();
+    if (!userData || userData.subscriptionTier === "free") {
+      return NextResponse.json(
+        { error: "Upgrade to Pro to use this tool" },
+        { status: 403 }
+      );
+    }
+
+    // Simulate AI Generation Delay (2 seconds as requested)
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Mock AI Response String
+    const generatedText = `This is your premium automated copy...\n\nBased on your prompt: "${prompt}"\n\n🚀 Discover the difference true quality makes.\n✨ Elevate your strategy today.\n\n(This is a placeholder response. Real LLM backend connection pending.)`;
 
     return NextResponse.json({ generatedText });
   } catch (error) {

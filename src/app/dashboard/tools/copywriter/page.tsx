@@ -44,16 +44,17 @@ export default function AICopywriterPage() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to generate copy");
+        throw new Error(data.error || "Failed to generate copy");
       }
 
-      const data = await response.json();
       setResult(data.generatedText || "No content generated.");
       toast.success("Copy generated successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error("An error occurred while generating copy.");
+      toast.error(error.message || "An error occurred while generating copy.");
     } finally {
       setIsGenerating(false);
     }
