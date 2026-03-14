@@ -35,11 +35,25 @@ export default function AuthPage() {
           email: user.email,
           subscriptionTier: "free",
           createdAt: serverTimestamp(),
+          metrics: {
+            totalTasks: 0,
+            hoursSaved: 0,
+            activeWorkflows: 0,
+            chartData: [
+              { day: 'Mon', tasks: 0 },
+              { day: 'Tue', tasks: 0 },
+              { day: 'Wed', tasks: 0 },
+              { day: 'Thu', tasks: 0 },
+              { day: 'Fri', tasks: 0 },
+              { day: 'Sat', tasks: 0 },
+              { day: 'Sun', tasks: 0 },
+            ]
+          }
         });
       }
 
-      // 4. Redirect to homepage after successful login/signup
-      router.push("/");
+      // 4. Redirect to Dashboard after successful login/signup
+      router.push("/dashboard");
     } catch (err: any) {
       console.error("Google Auth Error:", err);
       setError("Auth Failed: " + err.message);

@@ -42,8 +42,20 @@ export default function DashboardLayout({
   const navLinks = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "AI Tools", href: "/dashboard/tools", icon: Bot },
-    { name: "Settings", href: "/dashboard/settings", icon: Settings },
+    { name: "User Info", href: "/dashboard/settings", icon: Settings },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-950">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-zinc-950 text-white">

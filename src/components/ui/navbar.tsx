@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { BookCallModal } from "@/components/ui/book-call-modal";
-import { SubscriptionModal } from "@/components/ui/subscription-modal";
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, User, signOut } from "firebase/auth";
@@ -56,11 +55,6 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <SubscriptionModal>
-            <button className="text-sm font-medium text-zinc-400 hover:text-white transition-colors mr-4 flex items-center gap-1">
-              Billing
-            </button>
-          </SubscriptionModal>
           <button 
             onClick={() => signOut(auth)}
             className="text-sm font-medium text-zinc-400 hover:text-white transition-colors mr-4"

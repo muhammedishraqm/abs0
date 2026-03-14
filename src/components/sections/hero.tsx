@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 import { BookCallModal } from "@/components/ui/book-call-modal";
 
 export function Hero() {
@@ -42,13 +43,16 @@ export function Hero() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </BookCallModal>
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="h-14 border-zinc-800 bg-transparent px-10 text-base font-medium text-zinc-200 backdrop-blur-sm transition-all hover:bg-zinc-900/50 hover:text-white"
-          >
-            View Case Studies
-          </Button>
+          <Link href="/dashboard" passHref>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="h-14 border-zinc-800 bg-transparent px-10 text-base font-medium text-zinc-200 backdrop-blur-sm transition-all hover:bg-zinc-900/50 hover:text-white"
+            >
+              <LayoutDashboard className="mr-2 h-5 w-5" />
+              Dashboard
+            </Button>
+          </Link>
         </div>
 
         <div className="pt-16">
