@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ABSTRACT | AI Automation Agency",
   description: "Bespoke AI ecosystems for elite UAE enterprises. Automate operations and scale without overhead.",
+  icons: {
+    icon: "/abstract-icon.jpg",
+    shortcut: "/abstract-icon.jpg",
+    apple: "/abstract-icon.jpg",
+  },
 };
 
 export default function RootLayout({

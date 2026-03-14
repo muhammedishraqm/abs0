@@ -1,7 +1,24 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, User } from "firebase/auth";
 
 export function Footer() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setLoading(false);
+    });
+  }, []);
+
   const currentYear = new Date().getFullYear();
+
+  if (loading || !user) return null;
 
   return (
     <footer className="border-t border-zinc-800 bg-black py-12">
