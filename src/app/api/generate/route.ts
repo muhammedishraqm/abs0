@@ -59,17 +59,53 @@ export async function POST(req: Request) {
       );
     }
 
-    // Call Gemini via OpenAI-compatible endpoint
-    const completion = await gemini.chat.completions.create({
-      model: "gemini-2.0-flash", // Reverting for verification
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: prompt },
-      ],
-    });
+    // Resilient AI Generation Area
+    const generateWithResilience = async (userPrompt: string) => {
+      // Trying various model identifiers to find any available quota
+      const models = [
+        "gemini-2.0-flash", 
+        "gemini-1.5-flash", 
+        "gemini-1.5-pro",
+        "gemini-2.0-flash-exp"
+      ];
+      let lastError;
 
-    const generatedText =
-      completion.choices[0]?.message?.content || "No content generated.";
+      for (const modelName of models) {
+        try {
+          // Retry each model up to 5 times (total 6 attempts per model)
+          for (let attempt = 0; attempt < 5; attempt++) {
+            try {
+              console.log(`AI Attempt: Model=${modelName}, Attempt=${attempt + 1}`);
+              const completion = await gemini.chat.completions.create({
+                model: modelName,
+                messages: [
+                  { role: "system", content: SYSTEM_PROMPT },
+                  { role: "user", content: userPrompt },
+                ],
+              });
+              return completion.choices[0]?.message?.content || "No content generated.";
+            } catch (err: any) {
+              lastError = err;
+              // If rate limited, wait longer and retry
+              if (err.status === 429 && attempt < 4) {
+                const backoff = (attempt + 1) * 2000; // 2s, 4s, 6s, 8s...
+                await new Promise((r) => setTimeout(r, backoff));
+                continue;
+              }
+              throw err; 
+            }
+          }
+        } catch (modelError: any) {
+          console.warn(`Model ${modelName} failed:`, modelError.message);
+          // If it's a 404, we just move to next model immediately
+          if (modelError.status === 404 || modelError.status === 429) continue; 
+          throw modelError;
+        }
+      }
+      throw lastError;
+    };
+
+    const generatedText = await generateWithResilience(prompt);
 
     // Track usage in Firestore
     await userRef.update({
