@@ -1,21 +1,35 @@
 import { NextResponse } from "next/server";
 import * as admin from "firebase-admin";
+import OpenAI from "openai";
 
 // Initialize Firebase Admin securely
 if (!admin.apps.length) {
   try {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        // Handle newline characters in the private key from .env
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-      }),
-    });
+    if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+        }),
+      });
+    } else {
+      admin.initializeApp({
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      });
+    }
   } catch (error) {
     console.error("Firebase Admin Initialization Error:", error);
   }
 }
+
+// Initialize Gemini client via OpenAI-compatible SDK
+const gemini = new OpenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+});
+
+const SYSTEM_PROMPT = `You are a world-class, high-converting copywriter for a premium Dubai marketing agency. Write professional, engaging, and outcome-driven copy based on the user's request. Keep it concise, use formatting, and do not use generic buzzwords.`;
 
 export async function POST(req: Request) {
   try {
@@ -28,17 +42,13 @@ export async function POST(req: Request) {
       );
     }
 
-    // Connect to Firestore
+    // Connect to Firestore & verify user
     const db = admin.firestore();
     const userRef = db.collection("users").doc(userId);
     const userDoc = await userRef.get();
 
-    // Check Authorization
     if (!userDoc.exists) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 403 });
     }
 
     const userData = userDoc.data();
@@ -49,23 +59,38 @@ export async function POST(req: Request) {
       );
     }
 
-    // Simulate AI Generation Delay (2 seconds as requested)
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Call Gemini via OpenAI-compatible endpoint
+    const completion = await gemini.chat.completions.create({
+      model: "gemini-1.5-flash", // Switching to 1.5 to handle free tier limits better
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: prompt },
+      ],
+    });
 
-    // Mock AI Response String
-    const generatedText = `This is your premium automated copy...\n\nBased on your prompt: "${prompt}"\n\n🚀 Discover the difference true quality makes.\n✨ Elevate your strategy today.\n\n(This is a placeholder response. Real LLM backend connection pending.)`;
+    const generatedText =
+      completion.choices[0]?.message?.content || "No content generated.";
 
-    // Track Usage
+    // Track usage in Firestore
     await userRef.update({
       "metrics.totalTasks": admin.firestore.FieldValue.increment(1),
       "metrics.hoursSaved": admin.firestore.FieldValue.increment(0.5),
     });
 
     return NextResponse.json({ generatedText });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in /api/generate:", error);
+    
+    // Handle specific AI model rate limits
+    if (error.status === 429) {
+      return NextResponse.json(
+        { error: "AI model is currently at its free-tier limit. Please try again in a minute." },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: error.message || "Internal server error" },
       { status: 500 }
     );
   }
