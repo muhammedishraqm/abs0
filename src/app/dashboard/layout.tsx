@@ -4,10 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Bot, Settings, LogOut, ShieldCheck } from "lucide-react";
 import { auth } from "@/lib/firebase";
-import { signOut, onAuthStateChanged, User } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { useUserData } from "@/hooks/useUserData";
+import { toast } from "sonner";
 
 export default function DashboardLayout({
   children,
@@ -16,23 +18,16 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, userData, loading } = useUserData();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-      
-      // If we finished loading and there is no user, boot them to login
-      if (!currentUser) {
-        router.push("/login");
+    // We wait until loading is complete before booting them
+    if (!loading) {
+      if (!user) {
+        router.push("/login"); // Unauthenticated users get kicked to login
       }
-    });
-    
-    return () => unsubscribe();
-  }, [router]);
+    }
+  }, [user, loading, router]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -45,6 +40,7 @@ export default function DashboardLayout({
     { name: "User Info", href: "/dashboard/settings", icon: Settings },
   ];
 
+  // If the hook is still resolving, show Shadcn Loader
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-950">
@@ -53,6 +49,7 @@ export default function DashboardLayout({
     );
   }
 
+  // Double check user exists before rendering
   if (!user) {
     return null;
   }
