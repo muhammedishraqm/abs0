@@ -70,7 +70,7 @@ export function Navbar() {
 
               {userData?.subscriptionTier === 'pro' && (
                 <Link href="/dashboard">
-                  <Button size="sm" variant="outline" className="text-white border-zinc-700 hover:bg-zinc-800">
+                  <Button size="sm" className="bg-white text-zinc-950 hover:bg-zinc-200 font-bold">
                     Go to Dashboard
                   </Button>
                 </Link>
