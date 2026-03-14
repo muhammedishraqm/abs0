@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
     // Call Gemini via OpenAI-compatible endpoint
     const completion = await gemini.chat.completions.create({
-      model: "gemini-1.5-flash", // Switching to 1.5 to handle free tier limits better
+      model: "gemini-2.0-flash", // Reverting for verification
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: prompt },
@@ -81,16 +81,22 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("Error in /api/generate:", error);
     
-    // Handle specific AI model rate limits
-    if (error.status === 429) {
-      return NextResponse.json(
-        { error: "AI model is currently at its free-tier limit. Please try again in a minute." },
-        { status: 429 }
-      );
+    // Handle specific AI model errors (Rate limits, etc.)
+    if (error.status) {
+      const status = error.status;
+      let message = error.message || "AI service error";
+      
+      if (status === 429) {
+        message = "AI model is currently at its free-tier limit. Please try again in a minute.";
+      } else if (status === 404) {
+        message = "AI model not found. Defaulting to fallback.";
+      }
+
+      return NextResponse.json({ error: message }, { status });
     }
 
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
