@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Bot, Settings, LogOut, ShieldCheck, PenTool } from "lucide-react";
+import { LayoutDashboard, Bot, Settings, LogOut, ShieldCheck } from "lucide-react";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -37,7 +37,6 @@ export default function DashboardLayout({
   const navLinks = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "AI Tools", href: "/dashboard/tools", icon: Bot },
-    { name: "AI Copywriter", href: "/dashboard/tools/copywriter", icon: PenTool },
     { name: "User Info", href: "/dashboard/settings", icon: Settings },
   ];
 
