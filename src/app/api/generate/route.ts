@@ -55,6 +55,12 @@ export async function POST(req: Request) {
     // Mock AI Response String
     const generatedText = `This is your premium automated copy...\n\nBased on your prompt: "${prompt}"\n\n🚀 Discover the difference true quality makes.\n✨ Elevate your strategy today.\n\n(This is a placeholder response. Real LLM backend connection pending.)`;
 
+    // Track Usage
+    await userRef.update({
+      "metrics.totalTasks": admin.firestore.FieldValue.increment(1),
+      "metrics.hoursSaved": admin.firestore.FieldValue.increment(0.5),
+    });
+
     return NextResponse.json({ generatedText });
   } catch (error) {
     console.error("Error in /api/generate:", error);
